@@ -79,18 +79,21 @@ export class News extends Component {
 
   async componentDidMount() {
     let url =
-      "https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&page=1pageSize=20";
+      "https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&page=1&pageSize=20";
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
-    this.setState({ articles: parsedData.articles });
+    this.setState({
+      articles: parsedData.articles,
+      totalResult: parsedData.totalResult,
+    });
   }
 
   handlePrevClick = async () => {
     console.log("Previous");
-    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&${
+    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&page=${
       this.state.page - 1
-    }`;
+    }&pageSize=20`;
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
@@ -98,13 +101,19 @@ export class News extends Component {
   };
   handleNextClick = async () => {
     console.log("Next");
-    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&${
-      this.state.page + 1
-    }`;
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    console.log(parsedData);
-    this.setState({ page: this.state.page + 1, articles: parsedData.articles });
+    if (this.state.page + 1 > Math.ceil(this.state.totalResult / 20)) {
+    } else {
+      let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&page=${
+        this.state.page + 1
+      }&pageSize=20`;
+      let data = await fetch(url);
+      let parsedData = await data.json();
+      console.log(parsedData);
+      this.setState({
+        page: this.state.page + 1,
+        articles: parsedData.articles,
+      });
+    }
   };
   render() {
     return (
@@ -129,14 +138,15 @@ export class News extends Component {
         <div className="d-flex justify-content-between col-md-4 offset-4">
           <button
             type="button"
-            class="btn btn-dark"
+            className="btn btn-dark"
             onClick={this.handlePrevClick}
+            disabled={this.state.page <= 1}
           >
             Previous
           </button>
           <button
             type="button"
-            class="btn btn-dark"
+            className="btn btn-dark"
             onClick={this.handleNextClick}
           >
             Next
