@@ -85,6 +85,7 @@ export class News extends Component {
     console.log(parsedData);
     this.setState({ articles: parsedData.articles });
   }
+
   handlePrevClick = async () => {
     console.log("Previous");
     let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=bee89f7d9cc84c62ab1e25be2f590cd7&${
